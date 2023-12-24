@@ -1,0 +1,38 @@
+name: CDK Deployment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+    
+    - name: Install AWS CDK
+      run: npm install -g aws-cdk
+    
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Create venv
+      run: python -m venv .venv
+
+    - name: Activate venv
+      run: |
+        source .venv/bin/activate
+
+    
+
+    
