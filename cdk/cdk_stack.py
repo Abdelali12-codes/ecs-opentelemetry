@@ -177,7 +177,7 @@ class CdkStack(Stack):
         
         apptaskDef.add_to_execution_role_policy(taskexecutionRolePolicy)
         
-        apptaskDef.add_container("FlaskContainer",
+        flaskcontainer = apptaskDef.add_container("FlaskContainer",
               container_name="flask",
               image=ecs.ContainerImage.from_registry(
                    "080266302756.dkr.ecr.us-west-2.amazonaws.com/flask-repo:latest" 
@@ -195,7 +195,7 @@ class CdkStack(Stack):
                   )
             )
             
-        apptaskDef.add_container("NginxContainer",
+        nginxcontainer= apptaskDef.add_container("NginxContainer",
               container_name="nginx",
               image=ecs.ContainerImage.from_registry(
                    "080266302756.dkr.ecr.us-west-2.amazonaws.com/nginx-repo:latest" 
@@ -212,6 +212,8 @@ class CdkStack(Stack):
                     stream_prefix="ecs-nginxapp"
                   )
             )
+        
+        nginxcontainer.add_container_dependencies(container=flaskcontainer)
         
         # Flask application security group
         
