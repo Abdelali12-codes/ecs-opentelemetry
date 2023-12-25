@@ -188,10 +188,10 @@ class CdkStack(Stack):
               health_check=ecs.HealthCheck(
                     command=["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"],
                     # the properties below are optional
-                    interval=Duration.minutes(5),
+                    interval=Duration.seconds(60),
                     retries=6,
-                    start_period=Duration.minutes(5),
-                    timeout=Duration.minutes(5)
+                    start_period=Duration.seconds(60),
+                    timeout=Duration.seconds(60)
                 ),
               port_mappings=[
                   ecs.PortMapping(
