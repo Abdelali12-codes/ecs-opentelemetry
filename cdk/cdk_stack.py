@@ -41,7 +41,7 @@ class CdkStack(Stack):
         templated_secret = secretsmanager.Secret(self, "TemplatedSecret",
             secret_name="rdssecret",
             generate_secret_string=secretsmanager.SecretStringGenerator(
-                secret_string_template='{"username": %s}'.format(db_user),
+                secret_string_template="{'username': %s}".format(db_user),
                 generate_string_key="password",
                 exclude_characters="/@"
             )
