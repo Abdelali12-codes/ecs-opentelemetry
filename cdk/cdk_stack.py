@@ -57,7 +57,10 @@ class CdkStack(Stack):
             instance_type= ec2.InstanceType.of(ec2.InstanceClass.MEMORY5, ec2.InstanceSize.LARGE),
             credentials=rds.Credentials.from_generated_secret(secret_name="rdssecret",
             username=db_user),
-            vpc=vpc
+            vpc=vpc,
+            vpc_subnets=ec2.SubnetSelection(
+                    subnet_type = ec2.SubnetType.PUBLIC
+                )
         )
         # Route53 record
         zone = route53.HostedZone.from_hosted_zone_attributes(self,'Route53HostedZone',
