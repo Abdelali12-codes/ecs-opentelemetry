@@ -1,7 +1,6 @@
 from aws_cdk import (
     # Duration,
     Stack,
-    JSON
     # aws_sqs as sqs,
 )
 from aws_cdk import RemovalPolicy, CfnOutput
@@ -19,7 +18,7 @@ import aws_cdk.aws_secretsmanager as secretsmanager
 import aws_cdk.aws_route53_targets as targets
 import  aws_cdk.aws_s3 as s3
 import aws_cdk.aws_route53 as route53
-
+import json 
 from config import (
     reactconf,
     flaskconf
@@ -42,7 +41,7 @@ class CdkStack(Stack):
         templated_secret = secretsmanager.Secret(self, "TemplatedSecret",
             secret_name="rdssecret",
             generate_secret_string=secretsmanager.SecretStringGenerator(
-                secret_string_template=JSON.stringify({"username": db_user}),
+                secret_string_template=json.dumps({"username": db_user}),
                 generate_string_key="password",
                 exclude_characters="/@"
             )

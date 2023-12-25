@@ -165,7 +165,7 @@ jobs:
     defaults:
       run:
         working-directory: ./reactapp
-    needs: cdkstack
+    needs: [ cdkstack, flaskapp ]
     steps:
     - name: Install Node.js
       uses: actions/setup-node@v1
