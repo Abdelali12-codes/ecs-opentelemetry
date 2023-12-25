@@ -69,7 +69,7 @@ class CdkStack(Stack):
         certificate = acm.Certificate.from_certificate_arn(self, "domainCert", flaskconf["certificatearn"])
         
         # Acm for Cloudfront
-        clfcert = acm.Certificate.from_certificate_arn(self, "domainCert", reactconf["certificate_arn"])
+        clfcert = acm.Certificate.from_certificate_arn(self, "cloudfrontdomainCert", reactconf["certificate_arn"])
 
         
         # Loadbalancer sg
