@@ -253,7 +253,7 @@ class CdkStack(Stack):
                           response_page_path="/index.html"
                         )
                     ],
-                certificate=certificate,
+                certificate=clfcert,
                 domain_names=[reactconf['record_name']],
                 
         )
