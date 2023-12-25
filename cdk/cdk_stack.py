@@ -1,7 +1,8 @@
 from aws_cdk import (
     # Duration,
     Stack,
-    RemovalPolicy
+    RemovalPolicy,
+    Duration
     # aws_sqs as sqs,
 )
 from aws_cdk import RemovalPolicy, CfnOutput
@@ -184,6 +185,14 @@ class CdkStack(Stack):
                  ),
               memory_reservation_mib= 1024,
               cpu= 512,
+              health_check=ecs.HealthCheck(
+                    command=["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"],
+                    # the properties below are optional
+                    interval=Duration.minutes(5),
+                    retries=6,
+                    start_period=Duration.minutes(5),
+                    timeout=Duration.minutes(5)
+                ),
               port_mappings=[
                   ecs.PortMapping(
                       container_port=5000,
