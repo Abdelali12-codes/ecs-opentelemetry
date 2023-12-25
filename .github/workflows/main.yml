@@ -9,6 +9,7 @@ env:
   BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
   ACCOUNT: ${{ secrets.ACCOUNT }}
   REGION: ${{ secrets.REGION }}
+  AWS_REGION: ${{ secrets.REGION }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DB_NAME: ${{ secrets.DB_NAME }}
