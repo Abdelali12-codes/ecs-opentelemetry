@@ -213,7 +213,7 @@ class CdkStack(Stack):
                   )
             )
         
-        nginxcontainer.add_container_dependencies(flaskcontainer)
+        nginxcontainer.add_container_dependencies(ecs.ContainerDependency(container=flaskcontainer))
         
         # Flask application security group
         
