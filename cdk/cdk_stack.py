@@ -174,8 +174,8 @@ class CdkStack(Stack):
               image=ecs.ContainerImage.from_asset(
                    "../flaskapp" 
                  ),
-              memory_reservation_mib= 2048,
-              cpu= 1024,
+              memory_reservation_mib= 1024,
+              cpu= 512,
               port_mappings=[
                   ecs.PortMapping(
                       container_port=5000,
@@ -192,8 +192,8 @@ class CdkStack(Stack):
               image=ecs.ContainerImage.from_asset(
                    "../flaskapp/nginx" 
                  ),
-              memory_reservation_mib= 2048,
-              cpu= 1024,
+              memory_reservation_mib= 1024,
+              cpu= 512,
               port_mappings=[
                   ecs.PortMapping(
                       container_port=80,
