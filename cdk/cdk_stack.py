@@ -38,13 +38,9 @@ class CdkStack(Stack):
         vpc = ec2.Vpc.from_lookup(self, "ImportedVpc",vpc_id=flaskconf['vpcid'] )
         
         # Templated secret with username and password fields
-        templated_secret = secretsmanager.Secret(self, "TemplatedSecret",
+        rdssecret = rds.DatabaseSecret(self, "RDSSecret",
             secret_name="rdssecret",
-            generate_secret_string=secretsmanager.SecretStringGenerator(
-                secret_string_template='{"username": "%s"}'.format(db_user),
-                generate_string_key="password",
-                exclude_characters="/@"
-            )
+            username=db_user
         )
         # rds sg
         alb_sg = ec2.SecurityGroup(self, "RDSSSG",
@@ -63,10 +59,7 @@ class CdkStack(Stack):
             engine=rds.DatabaseInstanceEngine.MYSQL,
             database_name=db_name,
             instance_type= ec2.InstanceType.of(ec2.InstanceClass.MEMORY5, ec2.InstanceSize.LARGE),
-            credentials={
-                "username": templated_secret.secret_value_from_json("username").to_string(),
-                "password": templated_secret.secret_value_from_json("password")
-            },
+            credentials=rdssecret,
             vpc=vpc
         )
         # Route53 record
