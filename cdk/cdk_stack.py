@@ -1,6 +1,7 @@
 from aws_cdk import (
     # Duration,
     Stack,
+    RemovalPolicy
     # aws_sqs as sqs,
 )
 from aws_cdk import RemovalPolicy, CfnOutput
@@ -54,7 +55,8 @@ class CdkStack(Stack):
         rdsinstance = rds.DatabaseInstance(self, "MysqlInstance2",
             engine=rds.DatabaseInstanceEngine.MYSQL,
             database_name=db_name,
-            instance_type= ec2.InstanceType.of(ec2.InstanceClass.MEMORY5, ec2.InstanceSize.LARGE),
+            instance_type= ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
+            removal_policy= RemovalPolicy.DESTROY,
             credentials=rds.Credentials.from_generated_secret(secret_name="rdssecret",
             username=db_user),
             vpc=vpc,
@@ -177,8 +179,8 @@ class CdkStack(Stack):
         
         apptaskDef.add_container("FlaskContainer",
               container_name="flask",
-              image=ecs.ContainerImage.from_asset(
-                   "../flaskapp" 
+              image=ecs.ContainerImage.from_registry(
+                   "080266302756.dkr.ecr.us-west-2.amazonaws.com/flask-repo:latest" 
                  ),
               memory_reservation_mib= 1024,
               cpu= 512,
@@ -195,8 +197,8 @@ class CdkStack(Stack):
             
         apptaskDef.add_container("NginxContainer",
               container_name="nginx",
-              image=ecs.ContainerImage.from_asset(
-                   "../flaskapp/nginx" 
+              image=ecs.ContainerImage.from_registry(
+                   "080266302756.dkr.ecr.us-west-2.amazonaws.com/nginx-repo:latest" 
                  ),
               memory_reservation_mib= 1024,
               cpu= 512,
