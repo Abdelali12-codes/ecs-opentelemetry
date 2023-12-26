@@ -106,7 +106,7 @@ class CdkStack(Stack):
             
         )
         
-        alb_target_http = elb.ApplicationTargetGroup(self,"ApplicationTargetGroupHttp",
+        """alb_target_http = elb.ApplicationTargetGroup(self,"ApplicationTargetGroupHttp",
           port=80,
           target_group_name=flaskconf["tg-name"],
           target_type=elb.TargetType.IP,
@@ -116,18 +116,8 @@ class CdkStack(Stack):
               path="/"
           ),
           vpc=vpc
-        )
+        )"""
         
-        alb.add_listener("AWSAlbListenerHttp",
-         port=80,
-         default_target_groups= [alb_target_http]
-        )
-        
-        alb.add_listener("AWSAlbListenerHttps",
-         port=443,
-         certificates= [certificate],
-         default_target_groups= [alb_target_http]
-        )
         
         # Alias Record
         route53.ARecord(self, "AliasRecord",
@@ -244,8 +234,31 @@ class CdkStack(Stack):
                 )
                 
             )
+            
         
-        appfargateService.attach_to_application_target_group(alb_target_http)
+        httplist = alb.add_listener("AWSAlbListenerHttp",
+          port=80,
+        )
+        
+        httplist.add_targets(
+              port=80,
+              targets= [
+                  appfargateService.load_balancer_target("nginx", container_port=80, protocol=ecs.Protocol.HTTP)
+                ]
+            )
+            
+        httpslist = alb.add_listener("AWSAlbListenerHttps",
+         port=443,
+         certificates= [certificate],
+        )
+        
+        httpslist.add_targets(
+               port=80,
+               targets= [
+                  appfargateService.load_balancer_target("nginx", container_port=80, protocol=ecs.Protocol.HTTP)
+                 ]
+            )
+        #appfargateService.attach_to_application_target_group(alb_target_http)
         
         
         # React App Section
