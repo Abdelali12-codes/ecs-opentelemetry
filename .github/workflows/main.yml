@@ -92,13 +92,13 @@ jobs:
       uses: sergeysova/jq-action@v2
       id: distributionid
       with:
-        cmd: 'jq -r .ecsotelstack.distributionid outputs.json'
+        cmd: 'jq -r .ecsotelstack.distributionid ./cdk/outputs.json'
         
     - name: extract dbhost from outputs.json
       id: dbhost
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq -r .ecsotelstack.dbhost outputs.json'
+        cmd: 'jq -r .ecsotelstack.dbhost ./cdk/outputs.json'
       
 
 
