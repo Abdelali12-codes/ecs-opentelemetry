@@ -204,7 +204,7 @@ class CdkStack(Stack):
                   )
             )
             
-        """nginxcontainer= apptaskDef.add_container("NginxContainer",
+        nginxcontainer= apptaskDef.add_container("NginxContainer",
               container_name="nginx",
               image=ecs.ContainerImage.from_asset(
                    "../flaskapp/nginx" 
@@ -222,7 +222,7 @@ class CdkStack(Stack):
                   )
             )
         
-        nginxcontainer.add_container_dependencies(ecs.ContainerDependency(container=flaskcontainer))"""
+        nginxcontainer.add_container_dependencies(ecs.ContainerDependency(container=flaskcontainer))
         
         # Flask application security group
         
