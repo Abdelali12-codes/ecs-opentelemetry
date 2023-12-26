@@ -119,7 +119,7 @@ jobs:
     
     - name: Debug Json
       run: |
-        echo "JSON result: ${{ fromJSON(needs.cdkstack.outputs.dbpassword) }}"
+        echo "JSON result: ${{ needs.cdkstack.outputs.dbpassword }}"
         
     - name: dbpassword for rds 
       uses: sergeysova/jq-action@v2
