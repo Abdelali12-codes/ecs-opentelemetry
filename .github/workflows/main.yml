@@ -85,7 +85,7 @@ jobs:
     - name: Extract db password
       id: dbpassword
       run: |
-        secretvalue=$(aws secretmanager aws secretsmanager get-secret-value --secret-id rdssecret --query SecretString)
+        secretvalue=$(aws secretsmanager get-secret-value --secret-id rdssecret --query SecretString)
         echo "secretvalue=$secretvalue" >> $GITHUB_OUTPUT
         
     - name: extract distributionid from outputs.json
