@@ -116,6 +116,10 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.REGION }}
+    
+    - name: Debug Json
+      run: |
+        echo "JSON result: ${{ fromJSON(needs.cdkstack.outputs.dbpassword) }}"
         
     - name: dbpassword for rds 
       uses: sergeysova/jq-action@v2
