@@ -118,8 +118,7 @@ jobs:
         aws-region: ${{ env.REGION }}
     
     - name: Debug Json
-      run: |
-        echo "JSON result: ${{ needs.cdkstack.outputs.dbpassword }}"
+      run: echo "JSON result: ${{needs.cdkstack.outputs.dbpassword}}"
         
     - name: dbpassword for rds 
       uses: sergeysova/jq-action@v2
