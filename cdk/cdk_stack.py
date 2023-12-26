@@ -180,8 +180,8 @@ class CdkStack(Stack):
         
         flaskcontainer = apptaskDef.add_container("FlaskContainer",
               container_name="flask",
-              image=ecs.ContainerImage.from_registry(
-                   "080266302756.dkr.ecr.us-west-2.amazonaws.com/flask-repo:latest" 
+              image=ecs.ContainerImage.from_asset(
+                   "../flaskapp" 
                  ),
               memory_reservation_mib= 1024,
               cpu= 512,
@@ -206,8 +206,8 @@ class CdkStack(Stack):
             
         nginxcontainer= apptaskDef.add_container("NginxContainer",
               container_name="nginx",
-              image=ecs.ContainerImage.from_registry(
-                   "080266302756.dkr.ecr.us-west-2.amazonaws.com/nginx-repo:latest" 
+              image=ecs.ContainerImage.from_asset(
+                   "../flaskapp/nginx" 
                  ),
               memory_reservation_mib= 1024,
               cpu= 512,
