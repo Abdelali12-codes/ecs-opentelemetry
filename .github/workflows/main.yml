@@ -20,7 +20,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      cdkstack: ${{ steps.changes.outputs.cdkstack
+      cdkstack: ${{ steps.changes.outputs.cdkstack }}
       flaskapp: ${{ steps.changes.outputs.flaskapp }}
       reactapp: ${{ steps.changes.outputs.reactapp }}
     steps:
