@@ -1,5 +1,6 @@
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+from aws_xray_sdk.core import patch_all
 from flask import Flask,render_template, request
 from prometheus_client import Gauge, make_wsgi_app
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
@@ -9,13 +10,12 @@ import os
 
 app = Flask(__name__)
 
-xray_daemon_address = os.environ.get('AWS_XRAY_DAEMON_ADDRESS') 
+#xray_daemon_address = os.environ.get('AWS_XRAY_DAEMON_ADDRESS') 
 
 
-xray_recorder.configure(service='flask-app', daemon_address=xray_daemon_address)
-XRayMiddleware(app, xray_recorder) 
-plugins = ('EC2Plugin',)
-xray_recorder.configure(plugins=plugins)
+#xray_recorder.configure(service='flask-app', daemon_address=xray_daemon_address)
+#XRayMiddleware(app, xray_recorder) 
+#patch_all()
 
 app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST')
 app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER')
