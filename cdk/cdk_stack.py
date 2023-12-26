@@ -243,7 +243,7 @@ class CdkStack(Stack):
         httplist.add_targets(
               port=80,
               targets= [
-                  appfargateService.load_balancer_target(container_name="nginx", container_port=80, protocol=ecs.Protocol.HTTP)
+                  appfargateService.load_balancer_target(container_name="nginx", container_port=80, protocol=ecs.Protocol.TCP)
                 ]
             )
             
@@ -255,7 +255,7 @@ class CdkStack(Stack):
         httpslist.add_targets(
                port=80,
                targets= [
-                  appfargateService.load_balancer_target(container_name="nginx", container_port=80, protocol=ecs.Protocol.HTTP)
+                  appfargateService.load_balancer_target(container_name="nginx", container_port=80, protocol=ecs.Protocol.TCP)
                  ]
             )
         #appfargateService.attach_to_application_target_group(alb_target_http)
