@@ -17,8 +17,27 @@ env:
   
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      cdkstack: ${{ steps.changes.outputs.cdkstack
+      flaskapp: ${{ steps.changes.outputs.flaskapp }}
+      reactapp: ${{ steps.changes.outputs.reactapp }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          cdkstack:
+            - 'cdk/**'
+          flaskapp:
+            - 'flaskapp/**' 
+          reactapp:
+            - 'reactapp/**'
   cdkstack:
     runs-on: ubuntu-latest
+    needs: changes
     defaults:
       run:
         working-directory: ./cdk
@@ -85,7 +104,8 @@ jobs:
 
   flaskapp:
     runs-on: ubuntu-latest
-    needs: cdkstack
+    needs: [ cdkstack, changes ]
+    if: ${{ needs.changes.outputs.flaskapp == 'true' }}
     defaults:
       run:
         working-directory: ./flaskapp
@@ -166,7 +186,8 @@ jobs:
     defaults:
       run:
         working-directory: ./reactapp
-    needs: [ cdkstack, flaskapp ]
+    needs: [ cdkstack, flaskapp, changes ]
+    if: ${{ needs.changes.outputs.reactapp }}
     steps:
     - name: Install Node.js
       uses: actions/setup-node@v1
