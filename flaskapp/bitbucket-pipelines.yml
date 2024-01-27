@@ -1,0 +1,71 @@
+image: amazonlinux:2
+
+
+configure_aws: &configure_aws |-
+    echo "Install AWS CLI"
+    yum install jq -y && yum install python37 -y && curl -O https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py --user
+    export PATH=$PATH:/root/.local/bin
+    pip install awscli
+    echo "Configure AWS CLI"
+    aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    aws configure set region $AWS_REGION
+
+pipelines:
+  default:
+    - step:
+          name: Test & Packaging
+          image: gradle:6.3.0-jdk11
+          caches:
+            - gradle
+          script:
+            - bash ./gradlew clean
+            - bash ./gradlew test
+            - bash ./gradlew -Pprod bootJar
+          artifacts:
+            - build/libs/**
+    - step:
+        name: Build and Deploy
+        script:
+            - TAG=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+            # build the image
+            - docker build -t $ECR_REPO:$TAG .
+            # use the pipe to push the image to AWS ECR
+            - pipe: atlassian/aws-ecr-push-image:2.2.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_REGION
+                IMAGE_NAME: $ECR_REPO
+                TAGS: '$TAG'
+    
+    - step:
+        name: Update TaskDefinition 
+        script: 
+           - *configure_aws
+           - TAG=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+           - aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --region "$AWS_REGION" > task-definition.json
+           - DOCKER_IMAGE=$(jq -r '.taskDefinition.containerDefinitions[0].image' task-definition.json)
+           - EXISTING_TAG=$(echo $DOCKER_IMAGE | awk -F':' '{print $NF}')
+           - echo $DOCKER_IMAGE
+           - echo $EXISTING_TAG
+           - echo $TAG
+           - NEW_IMAGE=$(echo $DOCKER_IMAGE | sed "s/$EXISTING_TAG/$TAG/")
+           - jq --arg IMAGE "$NEW_IMAGE" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) |  del(.registeredAt)  | del(.registeredBy)' task-definition.json > new-taskdefinition.json
+        artifacts:
+           - new-taskdefinition.json
+
+    
+    - step:
+        name: Update Service
+        script:
+            - *configure_aws
+            - NEW_TASK_INFO=$(aws ecs register-task-definition --region "$AWS_REGION" --cli-input-json file://new-taskdefinition.json)
+            - NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
+            - aws ecs update-service --cluster $ECS_CLUSTER --service $SERVICE_NAME --task-definition $TASK_FAMILY:$NEW_REVISION
+   
+    - step:
+       name: Service Stable
+       script:
+            - *configure_aws
+            - aws ecs wait services-stable --cluster $ECS_CLUSTER  --services $SERVICE_NAME

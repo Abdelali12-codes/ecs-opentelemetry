@@ -1,0 +1,49 @@
+image: node:14
+
+definitions:
+  caches:
+    dependencies:
+      key:
+        files:
+          - package.json
+      path: node_modules
+
+configure_aws: &configure_aws |-
+    echo "Install AWS CLI"
+    apt-get update && apt-get install -y python3-pip
+    pip3 install awscli
+    echo "Configure AWS CLI"
+    aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    aws configure set region $AWS_REGION
+   
+pipelines:
+  default:
+          
+    - step:
+        name: Install Dependencies
+        caches:
+            - dependencies
+        script:
+            - echo "Install dependencies"
+            - npm install
+                  
+    - step:
+        name: Build
+        caches:
+          - dependencies
+        script:
+          - echo "Build React app"
+          - npm run build
+        artifacts:
+          - build/**
+
+    - step:
+        name: Deploy
+        script:
+          - *configure_aws
+          - echo "Deploy to S3"
+          - aws s3 sync build/ s3://$S3_BUCKET_NAME
+
+          - echo "Invalidate CloudFront cache"
+          - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths '/*'

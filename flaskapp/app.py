@@ -26,7 +26,7 @@ mysql = MySQL(app)
 
 @app.route('/')  
 def message():  
-      return "<html><body><h1>Hi, welcome to the website</h1><h2><a href='/form'> Login</a> </h2></body></html>"  
+      return "<html><body><h1>Hi This Change made By Bitbucket, welcome to the website</h1><h2><a href='/form'> Login</a> </h2></body></html>"  
 
 @app.route('/form')
 def form():
