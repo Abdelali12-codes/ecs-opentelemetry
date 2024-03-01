@@ -3,7 +3,7 @@ name: CDK Deployment
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
